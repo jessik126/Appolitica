@@ -1,0 +1,520 @@
+{
+  "metadata": {
+    "eleicao": 2026,
+    "ultimaAtualizacao": "2026-07-16",
+    "fonte": "Dados públicos (Câmara, Senado, sites oficiais) + curadoria manual para ações"
+  },
+  "politicos": [
+    {
+      "id": "pres-br-001",
+      "nome": "Luiz Inácio Lula da Silva",
+      "nomeUrna": "LULA",
+      "cargo": "presidente",
+      "partido": "PT",
+      "uf": "BR",
+      "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Lula_-_foto_oficial_-_05-01-2023_%28cropped%29.jpg/220px-Lula_-_foto_oficial_-_05-01-2023_%28cropped%29.jpg",
+      "contatos": {
+        "site": "https://www.gov.br/planalto",
+        "instagram": "@lulaoficial",
+        "twitter": "@LulaOficial"
+      },
+      "resumo": "Presidente da República (2023–2026). Referência de candidatura à reeleição em 2026.",
+      "acoes": [
+        {
+          "data": "2026-02-20",
+          "tipo": "discurso",
+          "titulo": "Mensagem sobre reforma tributária",
+          "descricao": "Defendeu a continuidade da implementação da reforma tributária, destacando simplificação para micro e pequenas empresas.",
+          "fonte": "https://www.gov.br/planalto"
+        }
+      ]
+    },
+    {
+      "id": "pres-br-002",
+      "nome": "Tarcísio Gomes de Freitas",
+      "nomeUrna": "TARCÍSIO",
+      "cargo": "presidente",
+      "partido": "REPUBLICANOS",
+      "uf": "BR",
+      "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Tarc%C3%ADsio_de_Freitas_%28cropped%29.jpg/220px-Tarc%C3%ADsio_de_Freitas_%28cropped%29.jpg",
+      "contatos": {
+        "site": "https://www.saopaulo.sp.gov.br",
+        "instagram": "@tarcisiogovsp"
+      },
+      "resumo": "Governador de São Paulo. Nome frequentemente citado como possível candidato presidencial em 2026.",
+      "acoes": [
+        {
+          "data": "2026-03-05",
+          "tipo": "projeto",
+          "titulo": "Programa de mobilidade em SP",
+          "descricao": "Anunciou investimentos em corredores de ônibus e integração metropolitana na Grande São Paulo.",
+          "fonte": "https://www.saopaulo.sp.gov.br"
+        }
+      ]
+    },
+    {
+      "id": "gov-sp-001",
+      "nome": "Tarcísio Gomes de Freitas",
+      "nomeUrna": "TARCÍSIO DE FREITAS",
+      "cargo": "governador",
+      "partido": "REPUBLICANOS",
+      "uf": "SP",
+      "contatos": {
+        "site": "https://www.saopaulo.sp.gov.br",
+        "instagram": "@tarcisiogovsp"
+      },
+      "resumo": "Governador de São Paulo desde 2023. Ex-ministro da Infraestrutura.",
+      "acoes": [
+        {
+          "data": "2026-01-15",
+          "tipo": "projeto",
+          "titulo": "Segurança pública",
+          "descricao": "Apresentou plano estadual de integração de câmeras e compartilhamento de dados entre municípios paulistas.",
+          "fonte": "https://www.saopaulo.sp.gov.br"
+        }
+      ]
+    },
+    {
+      "id": "gov-rj-001",
+      "nome": "Cláudio Castro",
+      "nomeUrna": "CLÁUDIO CASTRO",
+      "cargo": "governador",
+      "partido": "PL",
+      "uf": "RJ",
+      "contatos": {
+        "site": "https://www.rj.gov.br",
+        "instagram": "@claudiocastrooficial"
+      },
+      "resumo": "Governador do Rio de Janeiro. Reeleito em 2022.",
+      "acoes": [
+        {
+          "data": "2026-02-10",
+          "tipo": "votacao",
+          "titulo": "Orçamento estadual 2026",
+          "descricao": "Sancionou lei de diretrizes orçamentárias com foco em saúde e educação básica no estado.",
+          "fonte": "https://www.rj.gov.br"
+        }
+      ]
+    },
+    {
+      "id": "gov-mg-001",
+      "nome": "Romeu Zema Neto",
+      "nomeUrna": "ROMEU ZEMA",
+      "cargo": "governador",
+      "partido": "NOVO",
+      "uf": "MG",
+      "contatos": {
+        "site": "https://www.mg.gov.br",
+        "instagram": "@romeuzema"
+      },
+      "resumo": "Governador de Minas Gerais. Reeleito em 2022. Defende gestão enxuta e privatizações.",
+      "acoes": [
+        {
+          "data": "2026-03-01",
+          "tipo": "discurso",
+          "titulo": "Reforma administrativa estadual",
+          "descricao": "Discursou sobre redução de custos do funcionalismo e digitalização de serviços públicos mineiros.",
+          "fonte": "https://www.mg.gov.br"
+        }
+      ]
+    },
+    {
+      "id": "gov-ba-001",
+      "nome": "Jerônimo Rodrigues",
+      "nomeUrna": "JERÔNIMO",
+      "cargo": "governador",
+      "partido": "PT",
+      "uf": "BA",
+      "contatos": {
+        "site": "https://www.ba.gov.br",
+        "instagram": "@jeronomaba"
+      },
+      "resumo": "Governador da Bahia desde 2023. Ex-secretário de Educação do estado.",
+      "acoes": [
+        {
+          "data": "2026-02-28",
+          "tipo": "projeto",
+          "titulo": "Programa de irrigação",
+          "descricao": "Lançou programa de apoio a pequenos produtores rurais no semiárido baiano.",
+          "fonte": "https://www.ba.gov.br"
+        }
+      ]
+    },
+    {
+      "id": "sen-ba-001",
+      "nome": "Jaques Wagner",
+      "nomeUrna": "JAQUES WAGNER",
+      "cargo": "senador",
+      "partido": "PT",
+      "uf": "BA",
+      "foto": "https://www.senado.leg.br/senadores/img/fotos-oficiais/senador581.jpg",
+      "contatos": {
+        "email": "jaques.wagner@senado.leg.br",
+        "site": "https://www25.senado.leg.br/web/senadores/senador/-/perfil/581",
+        "twitter": "@JaquesWagner"
+      },
+      "resumo": "Senador pela Bahia. Ex-governador e ex-ministro da Casa Civil.",
+      "acoes": [
+        {
+          "data": "2026-03-12",
+          "tipo": "votacao",
+          "titulo": "Marco legal de inteligência artificial",
+          "descricao": "Votou a favor de relatório que estabelece regras básicas para uso de IA em serviços públicos e empresas.",
+          "fonte": "https://www25.senado.leg.br"
+        }
+      ]
+    },
+    {
+      "id": "sen-sp-001",
+      "nome": "Marcos Cesar Pontes",
+      "nomeUrna": "MARCOS PONTES",
+      "cargo": "senador",
+      "partido": "PL",
+      "uf": "SP",
+      "foto": "https://www.senado.leg.br/senadores/img/fotos-oficiais/senador5973.jpg",
+      "contatos": {
+        "email": "marcos.pontes@senado.leg.br",
+        "site": "https://www25.senado.leg.br/web/senadores/senador/-/perfil/5973",
+        "instagram": "@astromarcos"
+      },
+      "resumo": "Senador por São Paulo. Primeiro astronauta brasileiro. Ex-ministro da Ciência e Tecnologia.",
+      "acoes": [
+        {
+          "data": "2026-01-22",
+          "tipo": "projeto",
+          "titulo": "PL de estímulo à indústria espacial",
+          "descricao": "Apresentou projeto para incentivo fiscal a startups de tecnologia aeroespacial no Brasil.",
+          "fonte": "https://www25.senado.leg.br"
+        }
+      ]
+    },
+    {
+      "id": "sen-al-001",
+      "nome": "Renan Calheiros",
+      "nomeUrna": "RENAN CALHEIROS",
+      "cargo": "senador",
+      "partido": "MDB",
+      "uf": "AL",
+      "foto": "https://www.senado.leg.br/senadores/img/fotos-oficiais/senador70.jpg",
+      "contatos": {
+        "email": "renan.calheiros@senado.leg.br",
+        "site": "https://www25.senado.leg.br/web/senadores/senador/-/perfil/70"
+      },
+      "resumo": "Senador por Alagoas. Presidente da Comissão de Constituição e Justiça (CCJ) do Senado.",
+      "acoes": [
+        {
+          "data": "2026-02-05",
+          "tipo": "votacao",
+          "titulo": "Indicações ao STJ",
+          "descricao": "Conduziu sabatina e votação de indicados ao Superior Tribunal de Justiça.",
+          "fonte": "https://www25.senado.leg.br"
+        }
+      ]
+    },
+    {
+      "id": "sen-ms-001",
+      "nome": "Simone Tebet",
+      "nomeUrna": "SIMONE TEBET",
+      "cargo": "senador",
+      "partido": "MDB",
+      "uf": "MS",
+      "foto": "https://www.senado.leg.br/senadores/img/fotos-oficiais/senador5525.jpg",
+      "contatos": {
+        "email": "simone.tebet@senado.leg.br",
+        "site": "https://www25.senado.leg.br/web/senadores/senador/-/perfil/5525",
+        "instagram": "@simonetebet"
+      },
+      "resumo": "Senadora por Mato Grosso do Sul. Ex-ministra do Planejamento.",
+      "acoes": [
+        {
+          "data": "2026-03-08",
+          "tipo": "discurso",
+          "titulo": "Políticas para mulheres no campo",
+          "descricao": "Discursou em plenário sobre crédito rural e titulação de terras para agricultoras.",
+          "fonte": "https://www25.senado.leg.br"
+        }
+      ]
+    },
+    {
+      "id": "dep-federal-sp-001",
+      "nome": "Tabata Amaral Santos Lima",
+      "nomeUrna": "TABATA AMARAL",
+      "cargo": "deputado_federal",
+      "partido": "PSB",
+      "uf": "SP",
+      "foto": "https://www.camara.leg.br/internet/deputado/bandep/204534.jpg",
+      "contatos": {
+        "email": "dep.tabataamaral@camara.leg.br",
+        "site": "https://www.camara.leg.br/deputados/quem-e/quem-e-o-deputado/204534",
+        "instagram": "@tabataamaralsp",
+        "twitter": "@tabataamaralsp"
+      },
+      "resumo": "Deputada federal por São Paulo. Foco em educação pública e inovação.",
+      "acoes": [
+        {
+          "data": "2026-02-18",
+          "tipo": "projeto",
+          "titulo": "PL de educação digital nas escolas",
+          "descricao": "Propôs destinação de recursos do FUNDEB para laboratórios de informática e formação de professores.",
+          "fonte": "https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=2460000"
+        }
+      ]
+    },
+    {
+      "id": "dep-federal-sp-002",
+      "nome": "Kim Kataguiri",
+      "nomeUrna": "KIM KATAGUIRI",
+      "cargo": "deputado_federal",
+      "partido": "UNIÃO",
+      "uf": "SP",
+      "foto": "https://www.camara.leg.br/internet/deputado/bandep/204539.jpg",
+      "contatos": {
+        "email": "dep.kimkataguiri@camara.leg.br",
+        "site": "https://www.camara.leg.br/deputados/quem-e/quem-e-o-deputado/204539",
+        "instagram": "@kimkataguiri",
+        "twitter": "@kimkataguiri"
+      },
+      "resumo": "Deputado federal por São Paulo. Cofundador do Movimento Brasil Livre (MBL).",
+      "acoes": [
+        {
+          "data": "2026-01-30",
+          "tipo": "votacao",
+          "titulo": "Voto contra aumento de taxas",
+          "descricao": "Votou contra projeto que previa reajuste de taxas consulares, argumentando impacto sobre famílias de baixa renda.",
+          "fonte": "https://dadosabertos.camara.leg.br"
+        }
+      ]
+    },
+    {
+      "id": "dep-federal-rs-001",
+      "nome": "Marcel van Hattem",
+      "nomeUrna": "MARCEL VAN HATTEM",
+      "cargo": "deputado_federal",
+      "partido": "NOVO",
+      "uf": "RS",
+      "foto": "https://www.camara.leg.br/internet/deputado/bandep/156910.jpg",
+      "contatos": {
+        "email": "dep.marcelvanhattem@camara.leg.br",
+        "site": "https://www.camara.leg.br/deputados/quem-e/quem-e-o-deputado/156910",
+        "twitter": "@marcelvanhattem"
+      },
+      "resumo": "Deputado federal pelo Rio Grande do Sul. Defende liberalismo econômico.",
+      "acoes": [
+        {
+          "data": "2026-03-02",
+          "tipo": "discurso",
+          "titulo": "Corte de gastos públicos",
+          "descricao": "Discursou em plenário defendendo revisão de benefícios tributários e redução de duplicidade de programas federais.",
+          "fonte": "https://dadosabertos.camara.leg.br"
+        }
+      ]
+    },
+    {
+      "id": "dep-federal-rj-001",
+      "nome": "Benedita Souza da Silva",
+      "nomeUrna": "BENEDITA DA SILVA",
+      "cargo": "deputado_federal",
+      "partido": "PT",
+      "uf": "RJ",
+      "foto": "https://www.camara.leg.br/internet/deputado/bandep/73701.jpg",
+      "contatos": {
+        "email": "dep.beneditasouza@camara.leg.br",
+        "site": "https://www.camara.leg.br/deputados/quem-e/quem-e-o-deputado/73701",
+        "instagram": "@benedita.dasilva"
+      },
+      "resumo": "Deputada federal pelo Rio de Janeiro. Ex-governadora do RJ. Atua em direitos humanos e igualdade racial.",
+      "acoes": [
+        {
+          "data": "2026-02-25",
+          "tipo": "projeto",
+          "titulo": "PL de combate ao racismo institucional",
+          "descricao": "Apresentou projeto que obriga órgãos públicos a publicar relatórios anuais de equidade racial.",
+          "fonte": "https://www.camara.leg.br"
+        }
+      ]
+    },
+    {
+      "id": "dep-federal-mg-001",
+      "nome": "Nikolas Ferreira",
+      "nomeUrna": "NIKOLAS FERREIRA",
+      "cargo": "deputado_federal",
+      "partido": "PL",
+      "uf": "MG",
+      "foto": "https://www.camara.leg.br/internet/deputado/bandep/220607.jpg",
+      "contatos": {
+        "email": "dep.nikolasferreira@camara.leg.br",
+        "site": "https://www.camara.leg.br/deputados/quem-e/quem-e-o-deputado/220607",
+        "instagram": "@nikolasferreira"
+      },
+      "resumo": "Deputado federal por Minas Gerais. Mais votado do estado em 2022.",
+      "acoes": [
+        {
+          "data": "2026-01-12",
+          "tipo": "discurso",
+          "titulo": "Debate sobre liberdade de expressão",
+          "descricao": "Discursou na Câmara sobre limites legais de moderação de conteúdo em redes sociais.",
+          "fonte": "https://dadosabertos.camara.leg.br"
+        }
+      ]
+    },
+    {
+      "id": "dep-federal-sp-003",
+      "nome": "Erika Hilton",
+      "nomeUrna": "ERIKA HILTON",
+      "cargo": "deputado_federal",
+      "partido": "PSOL",
+      "uf": "SP",
+      "foto": "https://www.camara.leg.br/internet/deputado/bandep/220593.jpg",
+      "contatos": {
+        "email": "dep.erikahilton@camara.leg.br",
+        "site": "https://www.camara.leg.br/deputados/quem-e/quem-e-o-deputado/220593",
+        "instagram": "@erikahilton_"
+      },
+      "resumo": "Deputada federal por São Paulo. Primeira trans candidata mais votada do Brasil em 2022.",
+      "acoes": [
+        {
+          "data": "2026-03-15",
+          "tipo": "projeto",
+          "titulo": "PL de moradia para população LGBTQIA+",
+          "descricao": "Propôs programa habitacional específico para jovens LGBTQIA+ em situação de vulnerabilidade.",
+          "fonte": "https://www.camara.leg.br"
+        }
+      ]
+    },
+    {
+      "id": "dep-federal-ce-001",
+      "nome": "Capitão Wagner",
+      "nomeUrna": "CAPITÃO WAGNER",
+      "cargo": "deputado_federal",
+      "partido": "UNIÃO",
+      "uf": "CE",
+      "foto": "https://www.camara.leg.br/internet/deputado/bandep/204512.jpg",
+      "contatos": {
+        "email": "dep.capitãowagner@camara.leg.br",
+        "site": "https://www.camara.leg.br/deputados/quem-e/quem-e-o-deputado/204512",
+        "instagram": "@capitaowagner"
+      },
+      "resumo": "Deputado federal pelo Ceará. Ex-policial militar. Atua em segurança pública.",
+      "acoes": [
+        {
+          "data": "2026-02-08",
+          "tipo": "votacao",
+          "titulo": "Voto sobre fundo de segurança",
+          "descricao": "Votou a favor de destinação de recursos do Fundo Nacional de Segurança Pública para estados do Nordeste.",
+          "fonte": "https://dadosabertos.camara.leg.br"
+        }
+      ]
+    },
+    {
+      "id": "dep-federal-ba-001",
+      "nome": "Celina Leão",
+      "nomeUrna": "CELINA LEÃO",
+      "cargo": "deputado_federal",
+      "partido": "PP",
+      "uf": "BA",
+      "foto": "https://www.camara.leg.br/internet/deputado/bandep/204374.jpg",
+      "contatos": {
+        "email": "dep.celinaleao@camara.leg.br",
+        "site": "https://www.camara.leg.br/deputados/quem-e/quem-e-o-deputado/204374"
+      },
+      "resumo": "Deputada federal pela Bahia. Vice-governadora do DF (referência de carreira política regional).",
+      "acoes": [
+        {
+          "data": "2026-03-06",
+          "tipo": "projeto",
+          "titulo": "Apoio à agricultura familiar",
+          "descricao": "Relatou emenda que amplia linhas de crédito para cooperativas agrícolas no interior da Bahia.",
+          "fonte": "https://www.camara.leg.br"
+        }
+      ]
+    },
+    {
+      "id": "dep-estadual-sp-001",
+      "nome": "Carlos Giannazi",
+      "nomeUrna": "GIANNAZI",
+      "cargo": "deputado_estadual",
+      "partido": "PSOL",
+      "uf": "SP",
+      "contatos": {
+        "site": "https://www.al.sp.gov.br",
+        "instagram": "@carlosgiannazi"
+      },
+      "resumo": "Deputado estadual em São Paulo. Atua em educação pública e combate à privatização de escolas.",
+      "acoes": [
+        {
+          "data": "2026-02-14",
+          "tipo": "discurso",
+          "titulo": "Audiência sobre ensino médio",
+          "descricao": "Participou de audiência pública na ALESP sobre qualidade do ensino médio em periferias de SP.",
+          "fonte": "https://www.al.sp.gov.br"
+        }
+      ]
+    },
+    {
+      "id": "dep-estadual-rj-001",
+      "nome": "Anderson Ferreira",
+      "nomeUrna": "ANDERSON FERREIRA",
+      "cargo": "deputado_estadual",
+      "partido": "PL",
+      "uf": "RJ",
+      "contatos": {
+        "site": "https://www.alerj.rj.gov.br",
+        "instagram": "@andersonferreiradpl"
+      },
+      "resumo": "Deputado estadual no Rio de Janeiro. Atua em pautas de segurança e empreendedorismo.",
+      "acoes": [
+        {
+          "data": "2026-01-20",
+          "tipo": "projeto",
+          "titulo": "PL de apoio a microempreendedores",
+          "descricao": "Apresentou projeto estadual para reduzir burocracia na abertura de MEIs no RJ.",
+          "fonte": "https://www.alerj.rj.gov.br"
+        }
+      ]
+    },
+    {
+      "id": "dep-estadual-mg-001",
+      "nome": "Beatriz Cerqueira",
+      "nomeUrna": "BEATRIZ CERQUEIRA",
+      "cargo": "deputado_estadual",
+      "partido": "PT",
+      "uf": "MG",
+      "contatos": {
+        "site": "https://www.almg.gov.br",
+        "instagram": "@beatrizcerqueira"
+      },
+      "resumo": "Deputada estadual em Minas Gerais. Foco em saúde mental e políticas para juventude.",
+      "acoes": [
+        {
+          "data": "2026-03-10",
+          "tipo": "projeto",
+          "titulo": "Programa de saúde mental nas escolas",
+          "descricao": "Propôs programa estadual de acolhimento psicológico em escolas públicas mineiras.",
+          "fonte": "https://www.almg.gov.br"
+        }
+      ]
+    },
+    {
+      "id": "dep-estadual-ba-001",
+      "nome": "Olívia Santana",
+      "nomeUrna": "OLÍVIA SANTANA",
+      "cargo": "deputado_estadual",
+      "partido": "PT",
+      "uf": "BA",
+      "contatos": {
+        "site": "https://www.al.ba.gov.br",
+        "instagram": "@oliviasantana"
+      },
+      "resumo": "Deputada estadual na Bahia. Ex-secretária de Políticas para Mulheres. Atua em igualdade de gênero.",
+      "acoes": [
+        {
+          "data": "2026-02-22",
+          "tipo": "votacao",
+          "titulo": "Voto sobre programa de creches",
+          "descricao": "Votou a favor de expansão de vagas em creches públicas em municípios baianos do interior.",
+          "fonte": "https://www.al.ba.gov.br"
+        }
+      ]
+    }
+  ]
+}
