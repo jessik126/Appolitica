@@ -21,14 +21,25 @@ Na raiz do repositório:
 
 ```bash
 pnpm install
+pnpm infra:up
+pnpm --filter @appolitica/api db:migrate
+pnpm --filter @appolitica/api seed:mock   # primeira vez
+pnpm --filter @appolitica/api sync
 pnpm dev
 ```
 
-Isso inicia **web** (Vite, porta 5173) e **api** (Hono, porta 3001). O frontend faz proxy de `/api` para o BFF.
+Isso inicia **Postgres** (Docker/Colima), aplica migrations, carrega mock + dados federais, e sobe **web** (Vite, porta 5173) + **api** (Hono, porta 3001). O frontend faz proxy de `/api` para o BFF.
 
-Na primeira execução, a API sincroniza deputados e senadores automaticamente (pode levar alguns segundos).
+Na primeira requisição a `/politicos`, a API sincroniza deputados e senadores automaticamente se o banco estiver vazio (pode levar alguns segundos).
 
-### Sincronizar dados federais manualmente
+### Infraestrutura local
+
+```bash
+pnpm infra:up    # Colima (se instalado) + Postgres via Docker Compose
+pnpm infra:down  # Para o Postgres (volume preservado)
+```
+
+### Sincronizar dados manualmente
 
 ```bash
 pnpm --filter @appolitica/api sync          # Câmara + Senado
@@ -41,11 +52,11 @@ pnpm --filter @appolitica/api sync:senado   # só senadores
 | Método | Rota | Descrição |
 |--------|------|-----------|
 | GET | `/health` | Health check |
-| GET | `/politicos?uf=&partido=&q=&casa=` | Lista federal (CD/SF) |
-| GET | `/politicos/by-id/:id` | Perfil + ações (`CD:123` ou `SF:456`) |
+| GET | `/politicos?uf=&partido=&q=&casa=` | Lista completa (federal + mock) |
+| GET | `/politicos/by-id/:id` | Perfil + ações (`CD:123`, `SF:456` ou mock) |
 | GET | `/politicos/by-id/:id/acoes` | Feed de ações |
-| POST | `/sync/camara` | Atualiza cache de deputados |
-| POST | `/sync/senado` | Atualiza cache de senadores |
+| POST | `/sync/camara` | Atualiza deputados no Postgres |
+| POST | `/sync/senado` | Atualiza senadores no Postgres |
 | POST | `/sync/all` | Atualiza ambos |
 
 Documentação completa do frontend: [apps/web/README.md](apps/web/README.md)
@@ -55,8 +66,10 @@ Documentação completa do frontend: [apps/web/README.md](apps/web/README.md)
 ```
 Appolitica/
 ├── apps/
-│   ├── api/        # BFF — Câmara, Senado, cache local
+│   ├── api/        # BFF — Câmara, Senado, Postgres
 │   └── web/        # React SPA
+├── docker-compose.yml
+├── scripts/        # infra:up / infra:down
 ├── packages/
 │   └── types/      # Tipos compartilhados
 ├── docs/           # Documentação de marca e estratégia
@@ -72,7 +85,7 @@ Appolitica/
 |-------|-----|------|
 | [Câmara Dados Abertos](https://dadosabertos.camara.leg.br/swagger/api.html) | Deputados, proposições, votações | Nenhuma |
 | [Senado Dados Abertos](https://legis.senado.leg.br/dadosabertos/api-docs/swagger-ui/index.html) | Senadores, processos, votações | Nenhuma |
-| Mock JSON (`apps/web/public/data/`) | Presidente, governador, deputado estadual | — |
+| Mock curado (Postgres) | Presidente, governador, deputado estadual | — |
 | [Portal da Transparência](https://api.portaldatransparencia.gov.br/swagger-ui/index.html) | **Pós-PoC** — despesas executivas | Token Gov.br |
 
 Ver [docs/data-sources.md](docs/data-sources.md) para detalhes de integração e Portal da Transparência.
@@ -83,6 +96,8 @@ Ver [docs/data-sources.md](docs/data-sources.md) para detalhes de integração e
 |---------|-----------|
 | `pnpm install` | Instala dependências de todo o monorepo |
 | `pnpm dev` | Inicia web + api em modo desenvolvimento |
+| `pnpm infra:up` | Sobe Postgres (Colima/Docker) |
+| `pnpm infra:down` | Para Postgres |
 | `pnpm build` | Build de produção de todos os pacotes |
 | `pnpm lint` | Lint de todos os pacotes |
 | `pnpm preview` | Preview do build do web |

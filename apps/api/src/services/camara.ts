@@ -6,11 +6,18 @@ import {
   type Mandatario,
 } from '@appolitica/types'
 import { formatProjetoAcao, formatVotacaoAcao } from '../lib/plain-language.js'
-import { readCache, todayIso, writeCache, type MandatariosCache } from './cache.js'
+import {
+  buildCacheSnapshot,
+  getMandatarioByExternalId,
+  replaceMandatariosByFonte,
+  todayIso,
+  updateSyncMetadata,
+  type MandatariosCache,
+} from '../db/repository.js'
 
 const CAMARA_BASE = 'https://dadosabertos.camara.leg.br/api/v2'
 const LEGISLATURA_ATUAL = 57
-const CACHE_FILE = 'camara-deputados.json'
+const SYNC_FONTE = 'camara' as const
 
 interface CamaraListResponse<T> {
   dados: T[]
@@ -140,9 +147,17 @@ function mapDeputado(d: CamaraDeputado): Mandatario {
 
 export async function syncCamaraDeputados(): Promise<MandatariosCache> {
   const deputados = await fetchAllDeputados()
-  const mandatarios = deputados.map(mapDeputado)
+  const mapped = deputados.map(mapDeputado)
+  const mandatarios = Array.from(new Map(mapped.map((m) => [m.id, m])).values())
 
-  const cache: MandatariosCache = {
+  await replaceMandatariosByFonte(mandatarios, 'camara')
+  await updateSyncMetadata(SYNC_FONTE, {
+    ultimaAtualizacao: todayIso(),
+    total: mandatarios.length,
+    label: 'Câmara dos Deputados — Dados Abertos',
+  })
+
+  return {
     metadata: {
       ultimaAtualizacao: todayIso(),
       total: mandatarios.length,
@@ -150,13 +165,10 @@ export async function syncCamaraDeputados(): Promise<MandatariosCache> {
     },
     mandatarios,
   }
-
-  await writeCache(CACHE_FILE, cache)
-  return cache
 }
 
 export async function getCamaraCache(): Promise<MandatariosCache | null> {
-  return readCache(CACHE_FILE)
+  return buildCacheSnapshot('camara')
 }
 
 export async function getCamaraDeputados(): Promise<Mandatario[]> {
@@ -195,8 +207,7 @@ export async function getCamaraDeputadoDetail(externalId: string): Promise<Manda
       fonte: 'camara',
     }
   } catch {
-    const cache = await getCamaraCache()
-    return cache?.mandatarios.find((m) => m.externalId === externalId) ?? null
+    return getMandatarioByExternalId('CD', externalId)
   }
 }
 
@@ -311,5 +322,3 @@ export async function getCamaraDeputadoDespesas(
     itens,
   }
 }
-
-export { CACHE_FILE as CAMARA_CACHE_FILE }

@@ -8,21 +8,19 @@ SPA do Appolitica — cola de votação, acompanhamento de políticos e cobranç
 - Vite (proxy `/api` → BFF na porta 3001)
 - Tailwind CSS
 - `@appolitica/types` — tipos compartilhados
-- Dados federais via BFF; mock JSON para cargos sem TSE
+- Catálogo completo via BFF + Postgres (federal + mock)
 
 ## Como rodar
 
-Na raiz do monorepo (recomendado — sobe web + api):
+Na raiz do monorepo (recomendado):
 
 ```bash
 pnpm install
+pnpm infra:up
+pnpm --filter @appolitica/api db:migrate
+pnpm --filter @appolitica/api seed:mock   # primeira vez
+pnpm --filter @appolitica/api sync
 pnpm dev
-```
-
-Ou apenas este app (sem dados federais reais):
-
-```bash
-pnpm --filter @appolitica/web dev
 ```
 
 Abra `http://localhost:5173`.
@@ -31,7 +29,7 @@ Abra `http://localhost:5173`.
 
 - **Início** — proposta de valor, onboarding por UF, atalhos
 - **Cola** — escolha por cargo (presidente → deputado estadual), persistida separadamente
-- **Explorar** — busca/filtros; deputados e senadores reais + mock local
+- **Explorar** — busca/filtros; catálogo unificado (federal + mock)
 - **Meus** — acompanhamentos, notas, ações recentes, cobrança por e-mail
 
 ## Persistência (localStorage)
@@ -44,10 +42,6 @@ Abra `http://localhost:5173`.
 
 A chave legada `appolitica_meus_representantes_v1` é migrada automaticamente.
 
-## Mock JSON
-
-Catálogo mock em `public/data/politicos.json` — **apenas** presidente, governador e deputado estadual. Deputado federal e senador vêm da API.
-
 ## Scripts
 
 | Comando | Descrição |
@@ -58,3 +52,9 @@ Catálogo mock em `public/data/politicos.json` — **apenas** presidente, govern
 | `pnpm preview` | Preview do build |
 
 Na raiz: `pnpm --filter @appolitica/web <script>`
+
+## Docker
+
+```bash
+docker build -f apps/web/Dockerfile -t appolitica-web .
+```

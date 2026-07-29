@@ -7,7 +7,7 @@ export function usePoliticoDetail(politico: Politico | undefined) {
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    if (!politico?.id.includes(':')) {
+    if (!politico?.id) {
       setDetail(null)
       return
     }
@@ -41,7 +41,7 @@ export function usePoliticoAcoes(politicoId: string | undefined, fallback: Polit
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    if (!politicoId?.includes(':')) {
+    if (!politicoId) {
       setAcoes(fallback)
       return
     }
@@ -63,7 +63,7 @@ export function usePoliticoAcoes(politicoId: string | undefined, fallback: Polit
     return () => {
       cancelled = true
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- fallback is mock seed only
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- fallback is list seed only
   }, [politicoId])
 
   return { acoes, loading }

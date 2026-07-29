@@ -12,13 +12,13 @@ dist
 dist-ssr
 *.local
 
-# API cache (regenerated via sync scripts)
-apps/api/data/*.json
-
-
 # Environment
 .env
 .env.*
+!.env.example
+
+# API local data (legacy)
+apps/api/data/*.json
 
 # Editor directories and files
 .vscode/*

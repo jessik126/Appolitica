@@ -20,7 +20,7 @@ import { useUfPreferencia } from './hooks/useUfPreferencia'
 import type { CargoEleicao2026 } from './types/politico'
 
 function App() {
-  const { data, loading, error, federalUnavailable } = usePoliticos()
+  const { data, loading, error } = usePoliticos()
   const { items, isFollowing, toggle, unfollow, updateNota } = useAcompanhamento()
   const { cola, setEscolha, clearEscolha, totalPreenchidos } = useCola()
   const { uf, setUf, ufs } = useUfPreferencia()
@@ -82,13 +82,6 @@ function App() {
 
         {error && (
           <EmptyState title="Erro ao carregar dados" description={error} />
-        )}
-
-        {federalUnavailable && !loading && !error && (
-          <EmptyState
-            title="Dados federais indisponíveis"
-            description="Deputados e senadores reais não carregaram. Inicie a API com pnpm dev na raiz do projeto."
-          />
         )}
 
         {!loading && !error && tab === 'inicio' && (

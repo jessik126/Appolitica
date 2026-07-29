@@ -8,7 +8,7 @@
 - Base: `https://dadosabertos.camara.leg.br/api/v2/`
 - Auth: nenhuma
 - Uso: listagem de deputados, perfil, proposições autoria, votações recentes
-- Cache: `apps/api/data/camara-deputados.json` (gerado por `pnpm --filter @appolitica/api sync:camara`)
+- Persistência: Postgres (`mandatarios`, `sync_metadata`) via `pnpm --filter @appolitica/api sync:camara`
 
 ### Senado Federal (secundária)
 
@@ -16,13 +16,13 @@
 - Base: `https://legis.senado.leg.br/dadosabertos`
 - Auth: nenhuma
 - Uso: senadores em exercício, votações e processos via `/votacao` e `/processo`
-- Cache: `apps/api/data/senado-senadores.json`
+- Persistência: Postgres via `pnpm --filter @appolitica/api sync:senado`
 
-### Mock local
+### Mock curado (Postgres)
 
-- Arquivo: `apps/web/public/data/politicos.json`
+- Seed: `apps/api/src/data/mock-politicos.seed.json` → `pnpm --filter @appolitica/api seed:mock`
 - Cargos: presidente, governador, deputado estadual (até integração TSE)
-- Deputado federal e senador vêm do BFF, não do mock
+- Ações mock ficam em `acoes`; federal continua live via Câmara/Senado
 
 ### Despesas CEAP (deputados)
 
@@ -52,3 +52,4 @@ Para lookup por CPF/CNPJ: `/despesas/documentos-por-favorecido` (restrito, 180 r
 - Nunca chamar Câmara, Senado ou Portal da Transparência direto do browser (CORS + rate limits)
 - IDs federais normalizados: `CD:{id}` (deputado), `SF:{codigo}` (senador)
 - IDs não são compartilhados entre casas
+- Catálogo unificado via `GET /politicos` (Postgres); web não carrega JSON estático

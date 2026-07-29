@@ -7,10 +7,17 @@ import {
   formatSenadoProcessoAcao,
   formatSenadoVotacaoAcao,
 } from '../lib/plain-language.js'
-import { readCache, todayIso, writeCache, type MandatariosCache } from './cache.js'
+import {
+  buildCacheSnapshot,
+  getMandatarioByExternalId,
+  replaceMandatariosByFonte,
+  todayIso,
+  updateSyncMetadata,
+  type MandatariosCache,
+} from '../db/repository.js'
 
 const SENADO_BASE = 'https://legis.senado.leg.br/dadosabertos'
-const CACHE_FILE = 'senado-senadores.json'
+const SYNC_FONTE = 'senado' as const
 
 interface SenadoListaResponse {
   ListaParlamentarEmExercicio?: {
@@ -125,9 +132,17 @@ function mapSenador(p: SenadoParlamentarLista): Mandatario {
 export async function syncSenadoSenadores(): Promise<MandatariosCache> {
   const json = await fetchSenadoJson<SenadoListaResponse>('/senador/lista/atual')
   const lista = asArray(json.ListaParlamentarEmExercicio?.Parlamentares?.Parlamentar)
-  const mandatarios = lista.map(mapSenador)
+  const mapped = lista.map(mapSenador)
+  const mandatarios = Array.from(new Map(mapped.map((m) => [m.id, m])).values())
 
-  const cache: MandatariosCache = {
+  await replaceMandatariosByFonte(mandatarios, 'senado')
+  await updateSyncMetadata(SYNC_FONTE, {
+    ultimaAtualizacao: todayIso(),
+    total: mandatarios.length,
+    label: 'Senado Federal — Dados Abertos',
+  })
+
+  return {
     metadata: {
       ultimaAtualizacao: todayIso(),
       total: mandatarios.length,
@@ -135,13 +150,10 @@ export async function syncSenadoSenadores(): Promise<MandatariosCache> {
     },
     mandatarios,
   }
-
-  await writeCache(CACHE_FILE, cache)
-  return cache
 }
 
 export async function getSenadoCache(): Promise<MandatariosCache | null> {
-  return readCache(CACHE_FILE)
+  return buildCacheSnapshot('senado')
 }
 
 export async function getSenadoSenadores(): Promise<Mandatario[]> {
@@ -178,8 +190,7 @@ export async function getSenadorDetail(externalId: string): Promise<Mandatario |
       fonte: 'senado',
     }
   } catch {
-    const cache = await getSenadoCache()
-    return cache?.mandatarios.find((m) => m.externalId === externalId) ?? null
+    return getMandatarioByExternalId('SF', externalId)
   }
 }
 
@@ -239,5 +250,3 @@ export async function getSenadorAcoes(externalId: string, limit = 8): Promise<Ac
     .sort((a, b) => b.data.localeCompare(a.data))
     .slice(0, limit)
 }
-
-export { CACHE_FILE as SENADO_CACHE_FILE }

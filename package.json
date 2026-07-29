@@ -11,7 +11,9 @@
     "lint": "turbo run lint",
     "preview": "turbo run preview --filter=@appolitica/web",
     "deploy": "turbo run deploy",
-    "deploy:web": "turbo run deploy --filter=@appolitica/web"
+    "deploy:web": "turbo run deploy --filter=@appolitica/web",
+    "infra:up": "bash scripts/infra-up.sh",
+    "infra:down": "bash scripts/infra-down.sh"
   },
   "devDependencies": {
     "turbo": "^2.5.4"
