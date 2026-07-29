@@ -1,5 +1,10 @@
-import type { Politico } from '../types/politico'
+import type { Acao, Politico } from '../types/politico'
 import { CARGO_LABELS, TIPO_ACAO_LABELS } from '../types/politico'
+import { usePoliticoAcoes, usePoliticoDespesas } from '../hooks/usePoliticoDetail'
+
+function formatBrl(value: number): string {
+  return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+}
 
 interface PoliticoDetailProps {
   politico: Politico
@@ -9,13 +14,22 @@ interface PoliticoDetailProps {
   compact?: boolean
 }
 
-function buildMailto(politico: Politico): string | null {
+function buildMailto(politico: Politico, acoes: Acao[]): string | null {
   if (!politico.contatos.email) return null
   const subject = encodeURIComponent(
     `Cidadão(ã) cobrando transparência — ${politico.nomeUrna}`,
   )
+
+  const acoesText =
+    acoes.length > 0
+      ? `\n\nVi recentemente:\n${acoes
+          .slice(0, 2)
+          .map((a) => `- ${a.data}: ${a.titulo} — ${a.descricao}`)
+          .join('\n')}\n`
+      : ''
+
   const body = encodeURIComponent(
-    `Olá, ${politico.nomeUrna},\n\nSou eleitor(a) do ${politico.uf} e votei em você na eleição de 2026. Gostaria de saber sua posição sobre:\n\n[descreva sua demanda aqui]\n\nAtenciosamente,`,
+    `Olá, ${politico.nomeUrna},\n\nSou eleitor(a) do ${politico.uf} e acompanho seu mandato. Gostaria de saber sua posição sobre:\n\n[descreva sua demanda aqui]${acoesText}\nAtenciosamente,`,
   )
   return `mailto:${politico.contatos.email}?subject=${subject}&body=${body}`
 }
@@ -27,6 +41,16 @@ function socialUrl(handle: string, platform: 'instagram' | 'twitter'): string {
     : `https://x.com/${clean}`
 }
 
+function FonteBadge({ fonte }: { fonte: Politico['fonte'] }) {
+  if (fonte === 'mock') return null
+  const label = fonte === 'camara' ? 'Câmara' : 'Senado'
+  return (
+    <span className="rounded bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-800">
+      Dados reais · {label}
+    </span>
+  )
+}
+
 export function PoliticoDetail({
   politico,
   nota,
@@ -34,13 +58,21 @@ export function PoliticoDetail({
   onClose,
   compact = false,
 }: PoliticoDetailProps) {
-  const mailto = buildMailto(politico)
+  const { acoes, loading: acoesLoading } = usePoliticoAcoes(
+    politico.id,
+    politico.acoes,
+  )
+  const { despesas, loading: despesasLoading } = usePoliticoDespesas(politico.id)
+  const mailto = buildMailto(politico, acoes)
 
   return (
     <div className={`rounded-xl border border-slate-200 bg-white ${compact ? 'p-4' : 'p-5 shadow-sm'}`}>
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h3 className="text-lg font-semibold text-slate-900">{politico.nomeUrna}</h3>
+          <div className="flex flex-wrap items-center gap-2">
+            <h3 className="text-lg font-semibold text-slate-900">{politico.nomeUrna}</h3>
+            <FonteBadge fonte={politico.fonte} />
+          </div>
           <p className="text-sm text-slate-600">{politico.nome}</p>
           <p className="mt-1 text-sm text-slate-500">
             {CARGO_LABELS[politico.cargo]} · {politico.partido} · {politico.uf}
@@ -122,20 +154,86 @@ export function PoliticoDetail({
           <textarea
             value={nota ?? ''}
             onChange={(e) => onNotaChange(e.target.value)}
-            placeholder="Por que votei nesta pessoa? O que espero dela?"
+            placeholder="Por que acompanho esta pessoa? O que espero dela?"
             rows={3}
             className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
           />
         </div>
       )}
 
-      {politico.acoes.length > 0 && (
+      {politico.id.startsWith('CD:') && (
         <div className="mt-5">
           <h4 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-            Últimas ações
+            Gastos com cota parlamentar (CEAP)
           </h4>
+          {despesasLoading && (
+            <p className="mt-2 text-sm text-slate-500">Carregando despesas...</p>
+          )}
+          {!despesasLoading && despesas && (
+            <>
+              <p className="mt-2 text-sm text-slate-700">
+                Total em {despesas.ano}:{' '}
+                <span className="font-semibold text-slate-900">
+                  {formatBrl(despesas.total)}
+                </span>
+              </p>
+              <p className="mt-1 text-xs text-slate-500">{despesas.label}</p>
+              {despesas.itens.length > 0 && (
+                <ul className="mt-3 space-y-2">
+                  {despesas.itens.map((item, index) => (
+                    <li
+                      key={`${item.data}-${index}`}
+                      className="rounded-lg border border-slate-100 bg-slate-50 p-3 text-sm"
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <span className="font-medium text-slate-800">{item.tipo}</span>
+                        <span className="font-semibold text-slate-900">
+                          {formatBrl(item.valor)}
+                        </span>
+                      </div>
+                      {item.fornecedor && (
+                        <p className="mt-1 text-slate-600">{item.fornecedor}</p>
+                      )}
+                      <p className="mt-0.5 text-xs text-slate-500">{item.data}</p>
+                      {item.fonte && (
+                        <a
+                          href={item.fonte}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-1 inline-block text-xs text-emerald-700 hover:underline"
+                        >
+                          Ver documento
+                        </a>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </>
+          )}
+          {!despesasLoading && !despesas && (
+            <p className="mt-2 text-sm text-slate-500">
+              Despesas não disponíveis no momento.
+            </p>
+          )}
+        </div>
+      )}
+
+      <div className="mt-5">
+        <h4 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+          Últimas ações
+        </h4>
+        {acoesLoading && (
+          <p className="mt-2 text-sm text-slate-500">Carregando atividade recente...</p>
+        )}
+        {!acoesLoading && acoes.length === 0 && (
+          <p className="mt-2 text-sm text-slate-500">
+            Nenhuma ação recente disponível.
+          </p>
+        )}
+        {!acoesLoading && acoes.length > 0 && (
           <ul className="mt-2 space-y-3">
-            {politico.acoes.map((acao, index) => (
+            {acoes.map((acao, index) => (
               <li
                 key={`${acao.data}-${index}`}
                 className="rounded-lg border border-slate-100 bg-slate-50 p-3"
@@ -161,8 +259,8 @@ export function PoliticoDetail({
               </li>
             ))}
           </ul>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   )
 }

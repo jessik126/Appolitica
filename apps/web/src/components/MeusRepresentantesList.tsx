@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import type { MeuRepresentante, Politico } from '../types/politico'
+import type { MeuAcompanhamento, Politico } from '../types/politico'
 import { EmptyState } from './EmptyState'
 import { PoliticoCard } from './PoliticoCard'
 import { PoliticoDetail } from './PoliticoDetail'
 
 interface MeusRepresentantesListProps {
-  representantes: MeuRepresentante[]
+  representantes: MeuAcompanhamento[]
   politicos: Politico[]
   onRemove: (politicoId: string) => void
   onUpdateNota: (politicoId: string, nota: string) => void
@@ -26,15 +26,15 @@ export function MeusRepresentantesList({
       rep,
       politico: politicos.find((p) => p.id === rep.politicoId),
     }))
-    .filter((item): item is { rep: MeuRepresentante; politico: Politico } =>
+    .filter((item): item is { rep: MeuAcompanhamento; politico: Politico } =>
       Boolean(item.politico),
     )
 
   if (enriched.length === 0) {
     return (
       <EmptyState
-        title="Você ainda não marcou ninguém que votou"
-        description="Explore a lista de políticos e marque quem recebeu seu voto na eleição de 2026."
+        title="Você ainda não acompanha ninguém"
+        description="Explore a lista de políticos e marque quem você quer acompanhar."
         actionLabel="Explorar políticos"
         onAction={onExplorar}
       />
@@ -49,10 +49,16 @@ export function MeusRepresentantesList({
             politico={politico}
             selected
             onToggle={() => onRemove(rep.politicoId)}
-            onViewDetail={() =>
+          />
+          <button
+            type="button"
+            onClick={() =>
               setExpandedId(expandedId === rep.politicoId ? null : rep.politicoId)
             }
-          />
+            className="text-sm font-medium text-emerald-700 hover:underline"
+          >
+            {expandedId === rep.politicoId ? 'Ocultar detalhes' : 'Ver detalhes e ações'}
+          </button>
           {expandedId === rep.politicoId && (
             <PoliticoDetail
               politico={politico}

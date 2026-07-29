@@ -1,0 +1,28 @@
+{
+  "name": "@appolitica/api",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "lint": "oxlint src",
+    "sync:camara": "tsx src/scripts/sync-camara.ts",
+    "sync:senado": "tsx src/scripts/sync-senado.ts",
+    "sync": "tsx src/scripts/sync-all.ts",
+    "test": "node --import tsx --test src/lib/plain-language.test.ts"
+  },
+  "dependencies": {
+    "@appolitica/types": "workspace:*",
+    "@hono/node-server": "^1.14.4",
+    "hono": "^4.7.10",
+    "dotenv": "^16.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.2",
+    "oxlint": "^1.71.0",
+    "tsx": "^4.19.4",
+    "typescript": "~6.0.2"
+  }
+}

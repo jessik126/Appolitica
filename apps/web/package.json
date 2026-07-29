@@ -11,6 +11,7 @@
     "deploy": "echo \"Configure deploy for @appolitica/web\""
   },
   "dependencies": {
+    "@appolitica/types": "workspace:*",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
   },

@@ -6,6 +6,8 @@ interface PoliticoCardProps {
   selected: boolean
   onToggle: () => void
   onViewDetail?: () => void
+  onAddToCola?: () => void
+  toggleLabel?: string
 }
 
 function PoliticoAvatar({ politico }: { politico: Politico }) {
@@ -30,7 +32,11 @@ export function PoliticoCard({
   selected,
   onToggle,
   onViewDetail,
+  onAddToCola,
+  toggleLabel,
 }: PoliticoCardProps) {
+  const followLabel = toggleLabel ?? (selected ? 'Deixar de acompanhar' : 'Acompanhar')
+
   return (
     <article className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
       <div className="flex gap-3">
@@ -40,6 +46,9 @@ export function PoliticoCard({
           <p className="text-sm text-slate-600">{CARGO_LABELS[politico.cargo]}</p>
           <p className="text-sm text-slate-500">
             {politico.partido} · {politico.uf}
+            {politico.fonte !== 'mock' && (
+              <span className="ml-1 text-emerald-700">· dados reais</span>
+            )}
           </p>
         </div>
       </div>
@@ -54,8 +63,17 @@ export function PoliticoCard({
               : 'bg-emerald-700 text-white hover:bg-emerald-800'
           }`}
         >
-          {selected ? 'Remover da minha lista' : 'Votei neste'}
+          {followLabel}
         </button>
+        {onAddToCola && (
+          <button
+            type="button"
+            onClick={onAddToCola}
+            className="rounded-lg border border-emerald-700 px-3 py-2 text-sm font-medium text-emerald-800 transition hover:bg-emerald-50"
+          >
+            Na minha cola
+          </button>
+        )}
         {onViewDetail && (
           <button
             type="button"
