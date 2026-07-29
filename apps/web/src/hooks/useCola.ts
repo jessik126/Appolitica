@@ -1,50 +1,48 @@
 import { useCallback, useEffect, useState } from 'react'
-import type { CargoEleicao2026, CandidatoCola, MinhaCola, Politico } from '../types/politico'
-import { STORAGE_KEY_COLA } from '../types/politico'
+import type { CargoEleicao2026, MinhaCola, Politico } from '../types/politico'
+import { setColaEscolha } from '../lib/api'
+import { ensurePersonalDataBootstrapped } from '../lib/personalDataBootstrap'
+import { politicoToColaEscolha } from './useAcompanhamento'
 
-function readStorage(): MinhaCola {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY_COLA)
-    if (!raw) return {}
-    const parsed = JSON.parse(raw) as MinhaCola
-    return parsed && typeof parsed === 'object' ? parsed : {}
-  } catch {
-    return {}
-  }
-}
-
-function writeStorage(cola: MinhaCola) {
-  localStorage.setItem(STORAGE_KEY_COLA, JSON.stringify(cola))
-}
-
-export function useCola() {
-  const [cola, setCola] = useState<MinhaCola>(() => readStorage())
+export function useCola(userUf: string | null, ready: boolean) {
+  const [cola, setCola] = useState<MinhaCola>({})
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    writeStorage(cola)
-  }, [cola])
+    if (!ready) return
 
-  const setEscolha = useCallback((politico: Politico) => {
-    const escolha: CandidatoCola = {
-      cargo: politico.cargo,
-      politicoId: politico.id,
-      nome: politico.nome,
-      nomeUrna: politico.nomeUrna,
-      partido: politico.partido,
-      uf: politico.uf,
+    let cancelled = false
+
+    async function load() {
+      setLoading(true)
+      try {
+        const snapshot = await ensurePersonalDataBootstrapped(userUf)
+        if (!cancelled) setCola(snapshot.cola)
+      } catch {
+        if (!cancelled) setCola({})
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
     }
-    setCola((prev) => ({ ...prev, [politico.cargo]: escolha }))
+
+    void load()
+    return () => {
+      cancelled = true
+    }
+  }, [ready, userUf])
+
+  const setEscolha = useCallback(async (politico: Politico) => {
+    const escolha = politicoToColaEscolha(politico)
+    const next = await setColaEscolha(politico.cargo, escolha)
+    setCola(next)
   }, [])
 
-  const clearEscolha = useCallback((cargo: CargoEleicao2026) => {
-    setCola((prev) => {
-      const next = { ...prev }
-      delete next[cargo]
-      return next
-    })
+  const clearEscolha = useCallback(async (cargo: CargoEleicao2026) => {
+    const next = await setColaEscolha(cargo, null)
+    setCola(next)
   }, [])
 
   const totalPreenchidos = Object.keys(cola).length
 
-  return { cola, setEscolha, clearEscolha, totalPreenchidos }
+  return { cola, loading, setEscolha, clearEscolha, totalPreenchidos }
 }

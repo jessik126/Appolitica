@@ -134,6 +134,15 @@ export const COLA_CARGOS: CargoEleicao2026[] = [
   'deputado_estadual',
 ]
 
+export interface AuthUser {
+  id: string
+  name: string
+  email: string
+  uf: string | null
+  onboardingStep: number
+  onboardingCompleted: boolean
+}
+
 export const STORAGE_KEY_ACOMPANHAMENTO = 'appolitica_acompanhamento_v2'
 export const STORAGE_KEY_COLA = 'appolitica_cola_v1'
 export const STORAGE_KEY_UF = 'appolitica_uf_v1'

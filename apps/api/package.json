@@ -20,12 +20,14 @@
   "dependencies": {
     "@appolitica/types": "workspace:*",
     "@hono/node-server": "^1.14.4",
+    "bcryptjs": "^3.0.3",
     "dotenv": "^16.5.0",
     "drizzle-orm": "^0.45.2",
     "hono": "^4.7.10",
     "postgres": "^3.4.9"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^3.0.0",
     "@types/node": "^24.13.2",
     "drizzle-kit": "^0.31.10",
     "oxlint": "^1.71.0",

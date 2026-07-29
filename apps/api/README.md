@@ -50,7 +50,24 @@ Dados gravados em Postgres (`mandatarios`, `acoes`, `sync_metadata`).
 |----------|-----|
 | `DATABASE_URL` | Postgres (default: `postgresql://appolitica:appolitica@localhost:5432/appolitica`) |
 | `PORT` | Porta do servidor (default 3001) |
+| `SESSION_SECRET` | Segredo para hash de tokens de sessão (obrigatório em produção) |
 | `PORTAL_TRANSPARENCIA_TOKEN` | Token do [Portal da Transparência](https://portaldatransparencia.gov.br/api-de-dados/cadastrar-email) — ver `GET /portal/status` |
+
+## Autenticação
+
+Sessões via cookie HTTP-only (`appolitica_session`). Endpoints:
+
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| `POST` | `/auth/register` | Cadastro (name, email, password) |
+| `POST` | `/auth/login` | Login |
+| `POST` | `/auth/logout` | Encerra sessão |
+| `GET` | `/auth/me` | Usuário autenticado |
+| `PATCH` | `/me` | Atualiza UF / onboarding |
+| `GET/PUT` | `/me/acompanhamento` | Lista de políticos seguidos |
+| `GET/PUT` | `/me/cola` | Cola de votação |
+
+Tabelas: `users`, `sessions`, `user_acompanhamentos`, `user_cola`.
 
 ## Endpoints
 

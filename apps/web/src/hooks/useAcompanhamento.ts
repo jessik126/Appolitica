@@ -1,90 +1,73 @@
 import { useCallback, useEffect, useState } from 'react'
-import type { MeuAcompanhamento, MeuRepresentante } from '../types/politico'
-import { STORAGE_KEY, STORAGE_KEY_ACOMPANHAMENTO } from '../types/politico'
+import type { MeuAcompanhamento, Politico } from '../types/politico'
+import {
+  followPolitico,
+  unfollowPolitico,
+  updateAcompanhamentoNota,
+} from '../lib/api'
+import { ensurePersonalDataBootstrapped } from '../lib/personalDataBootstrap'
 
-function migrateLegacy(): MeuAcompanhamento[] {
-  try {
-    const legacy = localStorage.getItem(STORAGE_KEY)
-    if (!legacy) return []
-    const parsed = JSON.parse(legacy) as MeuRepresentante[]
-    if (!Array.isArray(parsed)) return []
-    return parsed.map((item) => ({
-      politicoId: item.politicoId,
-      seguidoEm: item.votadoEm,
-      nota: item.nota,
-    }))
-  } catch {
-    return []
-  }
-}
-
-function readStorage(): MeuAcompanhamento[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY_ACOMPANHAMENTO)
-    if (!raw) {
-      const migrated = migrateLegacy()
-      if (migrated.length > 0) {
-        localStorage.setItem(STORAGE_KEY_ACOMPANHAMENTO, JSON.stringify(migrated))
-      }
-      return migrated
-    }
-    const parsed = JSON.parse(raw) as MeuAcompanhamento[]
-    return Array.isArray(parsed) ? parsed : []
-  } catch {
-    return []
-  }
-}
-
-function writeStorage(items: MeuAcompanhamento[]) {
-  localStorage.setItem(STORAGE_KEY_ACOMPANHAMENTO, JSON.stringify(items))
-}
-
-export function useAcompanhamento() {
-  const [items, setItems] = useState<MeuAcompanhamento[]>(() => readStorage())
+export function useAcompanhamento(userUf: string | null, ready: boolean) {
+  const [items, setItems] = useState<MeuAcompanhamento[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    writeStorage(items)
-  }, [items])
+    if (!ready) return
+
+    let cancelled = false
+
+    async function load() {
+      setLoading(true)
+      try {
+        const snapshot = await ensurePersonalDataBootstrapped(userUf)
+        if (!cancelled) setItems(snapshot.acompanhamento)
+      } catch {
+        if (!cancelled) setItems([])
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+
+    void load()
+    return () => {
+      cancelled = true
+    }
+  }, [ready, userUf])
 
   const isFollowing = useCallback(
     (politicoId: string) => items.some((item) => item.politicoId === politicoId),
     [items],
   )
 
-  const follow = useCallback((politicoId: string) => {
-    setItems((prev) => {
-      if (prev.some((item) => item.politicoId === politicoId)) return prev
-      return [
-        ...prev,
-        { politicoId, seguidoEm: new Date().toISOString().slice(0, 10) },
-      ]
-    })
+  const follow = useCallback(async (politicoId: string) => {
+    const next = await followPolitico(politicoId)
+    setItems(next)
   }, [])
 
-  const unfollow = useCallback((politicoId: string) => {
-    setItems((prev) => prev.filter((item) => item.politicoId !== politicoId))
+  const unfollow = useCallback(async (politicoId: string) => {
+    const next = await unfollowPolitico(politicoId)
+    setItems(next)
   }, [])
 
   const toggle = useCallback(
-    (politicoId: string) => {
-      if (isFollowing(politicoId)) unfollow(politicoId)
-      else follow(politicoId)
+    async (politicoId: string) => {
+      if (isFollowing(politicoId)) await unfollow(politicoId)
+      else await follow(politicoId)
     },
     [follow, isFollowing, unfollow],
   )
 
-  const updateNota = useCallback((politicoId: string, nota: string) => {
-    setItems((prev) =>
-      prev.map((item) => (item.politicoId === politicoId ? { ...item, nota } : item)),
-    )
+  const updateNota = useCallback(async (politicoId: string, nota: string) => {
+    const next = await updateAcompanhamentoNota(politicoId, nota)
+    setItems(next)
   }, [])
 
-  return { items, isFollowing, follow, unfollow, toggle, updateNota }
+  return { items, loading, isFollowing, follow, unfollow, toggle, updateNota }
 }
 
 /** @deprecated Use useAcompanhamento */
-export function useMeusRepresentantes() {
-  const { items, isFollowing, toggle, unfollow, updateNota } = useAcompanhamento()
+export function useMeusRepresentantes(userUf: string | null, ready: boolean) {
+  const { items, isFollowing, toggle, unfollow, updateNota } = useAcompanhamento(userUf, ready)
   return {
     items: items.map((i) => ({
       politicoId: i.politicoId,
@@ -95,5 +78,16 @@ export function useMeusRepresentantes() {
     toggle,
     remove: unfollow,
     updateNota,
+  }
+}
+
+export function politicoToColaEscolha(politico: Politico) {
+  return {
+    cargo: politico.cargo,
+    politicoId: politico.id,
+    nome: politico.nome,
+    nomeUrna: politico.nomeUrna,
+    partido: politico.partido,
+    uf: politico.uf,
   }
 }

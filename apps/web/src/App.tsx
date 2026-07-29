@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
+import type { AuthUser } from './types/politico'
+import { AuthScreen } from './components/auth/AuthScreen'
 import { ColaView } from './components/ColaView'
 import { EmptyState } from './components/EmptyState'
 import { Header } from './components/Header'
 import { HeroSection } from './components/HeroSection'
 import { MeusRepresentantesList } from './components/MeusRepresentantesList'
+import { OnboardingWizard } from './components/onboarding/OnboardingWizard'
 import { PoliticoCard } from './components/PoliticoCard'
 import { PoliticoDetail } from './components/PoliticoDetail'
 import {
@@ -12,18 +15,34 @@ import {
   SearchFilters,
 } from './components/SearchFilters'
 import { TabNav, type TabId } from './components/TabNav'
-import { UfOnboarding } from './components/UfOnboarding'
 import { useAcompanhamento } from './hooks/useAcompanhamento'
+import { useAuth } from './hooks/useAuth'
 import { useCola } from './hooks/useCola'
 import { usePoliticos } from './hooks/usePoliticos'
 import { useUfPreferencia } from './hooks/useUfPreferencia'
+import { resetPersonalDataBootstrap } from './lib/personalDataBootstrap'
 import type { CargoEleicao2026 } from './types/politico'
 
-function App() {
+function AppShell({
+  user,
+  setUser,
+  onLogout,
+}: {
+  user: AuthUser
+  setUser: (user: AuthUser) => void
+  onLogout: () => Promise<void>
+}) {
+  const personalReady = Boolean(user.onboardingCompleted)
   const { data, loading, error } = usePoliticos()
-  const { items, isFollowing, toggle, unfollow, updateNota } = useAcompanhamento()
-  const { cola, setEscolha, clearEscolha, totalPreenchidos } = useCola()
-  const { uf, setUf, ufs } = useUfPreferencia()
+  const { items, isFollowing, toggle, unfollow, updateNota } = useAcompanhamento(
+    user.uf,
+    personalReady,
+  )
+  const { cola, setEscolha, clearEscolha, totalPreenchidos } = useCola(
+    user.uf,
+    personalReady,
+  )
+  const { uf } = useUfPreferencia(user)
 
   const [tab, setTab] = useState<TabId>('inicio')
   const [busca, setBusca] = useState('')
@@ -59,14 +78,31 @@ function App() {
     : undefined
 
   function handlePickForCola(politico: (typeof politicos)[0]) {
-    setEscolha(politico)
+    void setEscolha(politico)
     setColaPickCargo(null)
     setTab('cola')
   }
 
+  async function handleLogout() {
+    resetPersonalDataBootstrap()
+    await onLogout()
+  }
+
+  if (!user.onboardingCompleted) {
+    return (
+      <OnboardingWizard
+        user={user}
+        onComplete={(nextUser) => {
+          resetPersonalDataBootstrap()
+          setUser(nextUser)
+        }}
+      />
+    )
+  }
+
   return (
     <div className="min-h-screen bg-slate-50">
-      <Header />
+      <Header userName={user.name} onLogout={() => void handleLogout()} />
 
       <main className="mx-auto max-w-3xl space-y-6 px-4 py-6 pb-24">
         <TabNav
@@ -93,7 +129,6 @@ function App() {
               onVerLista={() => setTab('meus')}
               onMontarCola={() => setTab('cola')}
             />
-            {!uf && <UfOnboarding uf={uf} ufs={ufs} onUfChange={setUf} />}
             {items.length > 0 && (
               <section>
                 <h2 className="mb-3 text-lg font-semibold text-slate-900">
@@ -108,7 +143,7 @@ function App() {
                         key={rep.politicoId}
                         politico={politico}
                         selected
-                        onToggle={() => unfollow(rep.politicoId)}
+                        onToggle={() => void unfollow(rep.politicoId)}
                         onViewDetail={() => {
                           setDetailId(rep.politicoId)
                           setTab('explorar')
@@ -125,7 +160,7 @@ function App() {
         {!loading && !error && tab === 'cola' && (
           <ColaView
             cola={cola}
-            onClear={clearEscolha}
+            onClear={(c) => void clearEscolha(c)}
             onPick={(c) => {
               setColaPickCargo(c)
               setCargo(c)
@@ -151,8 +186,6 @@ function App() {
                 </button>
               </div>
             )}
-
-            {!uf && <UfOnboarding uf={uf} ufs={ufs} onUfChange={setUf} />}
 
             <SearchFilters
               busca={busca}
@@ -193,12 +226,12 @@ function App() {
                     key={politico.id}
                     politico={politico}
                     selected={isFollowing(politico.id)}
-                    onToggle={() => toggle(politico.id)}
+                    onToggle={() => void toggle(politico.id)}
                     onAddToCola={
                       colaPickCargo
                         ? () => handlePickForCola(politico)
                         : () => {
-                            setEscolha(politico)
+                            void setEscolha(politico)
                             setTab('cola')
                           }
                     }
@@ -214,8 +247,8 @@ function App() {
           <MeusRepresentantesList
             representantes={items}
             politicos={politicos}
-            onRemove={unfollow}
-            onUpdateNota={updateNota}
+            onRemove={(id) => void unfollow(id)}
+            onUpdateNota={(id, nota) => void updateNota(id, nota)}
             onExplorar={() => setTab('explorar')}
           />
         )}
@@ -225,6 +258,62 @@ function App() {
         Appolitica PoC · Federal via Câmara/Senado · Outros cargos mock · Eleição 2026
       </footer>
     </div>
+  )
+}
+
+function App() {
+  const auth = useAuth()
+  const [authLoading, setAuthLoading] = useState(false)
+
+  async function handleLogin(email: string, password: string) {
+    setAuthLoading(true)
+    auth.setError(null)
+    try {
+      await auth.login(email, password)
+    } catch (err) {
+      auth.setError(err instanceof Error ? err.message : 'Erro ao entrar.')
+    } finally {
+      setAuthLoading(false)
+    }
+  }
+
+  async function handleRegister(name: string, email: string, password: string) {
+    setAuthLoading(true)
+    auth.setError(null)
+    try {
+      await auth.register(name, email, password)
+    } catch (err) {
+      auth.setError(err instanceof Error ? err.message : 'Erro ao criar conta.')
+    } finally {
+      setAuthLoading(false)
+    }
+  }
+
+  if (auth.loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-50">
+        <p className="text-sm text-slate-600">Carregando...</p>
+      </div>
+    )
+  }
+
+  if (!auth.user) {
+    return (
+      <AuthScreen
+        onLogin={handleLogin}
+        onRegister={handleRegister}
+        error={auth.error}
+        loading={authLoading}
+      />
+    )
+  }
+
+  return (
+    <AppShell
+      user={auth.user}
+      setUser={auth.setUser}
+      onLogout={auth.logout}
+    />
   )
 }
 
