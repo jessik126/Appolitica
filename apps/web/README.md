@@ -12,10 +12,17 @@ SPA de validação do MVP Appolitica — ferramenta para o eleitor guardar os po
 
 ## Como rodar
 
+Na raiz do monorepo:
+
 ```bash
-cd web
-npm install
-npm run dev
+pnpm install
+pnpm dev
+```
+
+Ou apenas este app:
+
+```bash
+pnpm --filter @appolitica/web dev
 ```
 
 Abra o endereço exibido no terminal (geralmente `http://localhost:5173`).
@@ -24,9 +31,13 @@ Abra o endereço exibido no terminal (geralmente `http://localhost:5173`).
 
 | Comando | Descrição |
 |---------|-----------|
-| `npm run dev` | Servidor de desenvolvimento |
-| `npm run build` | Build de produção |
-| `npm run preview` | Preview do build |
+| `pnpm dev` | Servidor de desenvolvimento |
+| `pnpm build` | Build de produção |
+| `pnpm lint` | Lint com oxlint |
+| `pnpm preview` | Preview do build |
+| `pnpm run deploy` | Placeholder de deploy (configurar depois) |
+
+Na raiz, use `pnpm --filter @appolitica/web <script>` para executar um script deste pacote.
 
 ## Editar dados dos políticos
 

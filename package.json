@@ -1,0 +1,19 @@
+{
+  "name": "appolitica",
+  "private": true,
+  "packageManager": "pnpm@9.15.9",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "preview": "turbo run preview --filter=@appolitica/web",
+    "deploy": "turbo run deploy",
+    "deploy:web": "turbo run deploy --filter=@appolitica/web"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.4"
+  }
+}

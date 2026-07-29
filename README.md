@@ -16,21 +16,45 @@ O primeiro protótipo é um **app web de página única**, sem backend, para val
 
 ### Rodar o app
 
+Na raiz do repositório:
+
 ```bash
-cd web
-npm install
-npm run dev
+pnpm install
+pnpm dev
 ```
 
-Documentação completa do frontend: [web/README.md](web/README.md)
+Documentação completa do frontend: [apps/web/README.md](apps/web/README.md)
 
 ## Estrutura do repositório
 
 ```
 Appolitica/
+├── apps/
+│   └── web/        # MVP React (SPA)
+├── packages/       # Bibliotecas compartilhadas (futuro)
 ├── docs/           # Documentação de marca e estratégia
-├── web/            # MVP React (SPA)
+├── package.json
+├── pnpm-workspace.yaml
+├── turbo.json
 └── README.md
+```
+
+## Scripts (raiz)
+
+| Comando | Descrição |
+|---------|-----------|
+| `pnpm install` | Instala dependências de todo o monorepo |
+| `pnpm dev` | Inicia apps em modo desenvolvimento |
+| `pnpm build` | Build de produção de todos os pacotes |
+| `pnpm lint` | Lint de todos os pacotes |
+| `pnpm preview` | Preview do build do web |
+| `pnpm run deploy` | Executa deploy de todos os pacotes |
+| `pnpm run deploy:web` | Deploy apenas do frontend |
+
+Para rodar um pacote específico:
+
+```bash
+pnpm --filter @appolitica/web dev
 ```
 
 ## Documentação de marca
@@ -39,6 +63,7 @@ O exercício de posicionamento e público-alvo está em [docs/lab_marcas.md](doc
 
 ## Evolução prevista
 
+- API backend (`apps/api`)
 - Notícias dos políticos favoritos (votados ou em observação)
 - Integração com dados abertos (Câmara, Senado, TSE)
 - App mobile / PWA
