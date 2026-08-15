@@ -20,11 +20,7 @@ Dual-track thin PoC:
 Na raiz do repositório:
 
 ```bash
-pnpm install
-pnpm infra:up
-pnpm --filter @appolitica/api db:migrate
-pnpm --filter @appolitica/api seed:mock   # primeira vez
-pnpm --filter @appolitica/api sync
+pnpm setup
 pnpm dev
 ```
 
