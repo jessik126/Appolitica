@@ -7,6 +7,8 @@ export type CargoEleicao2026 =
   | 'deputado_federal'
   | 'deputado_estadual'
 
+export type GeneroPolitico = 'feminino' | 'masculino' | 'nao_binario' | 'outro'
+
 export type TipoAcao = 'votacao' | 'projeto' | 'discurso' | 'evento' | 'outro'
 
 export type FontePolitico = 'camara' | 'senado' | 'mock'
@@ -59,6 +61,7 @@ export interface Mandatario {
   partido: string
   uf: string
   foto?: string
+  genero?: GeneroPolitico
   contatos: ContatosPolitico
   resumo: string
   fonte: FontePolitico

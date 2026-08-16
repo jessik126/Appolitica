@@ -21,6 +21,7 @@ export const mandatarios = pgTable(
     partido: text('partido').notNull(),
     uf: text('uf').notNull(),
     foto: text('foto'),
+    genero: text('genero'),
     contatos: jsonb('contatos').notNull().$type<{
       email?: string
       site?: string

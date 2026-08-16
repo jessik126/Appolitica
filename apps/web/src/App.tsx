@@ -21,7 +21,7 @@ import { useCola } from './hooks/useCola'
 import { usePoliticos } from './hooks/usePoliticos'
 import { useUfPreferencia } from './hooks/useUfPreferencia'
 import { resetPersonalDataBootstrap } from './lib/personalDataBootstrap'
-import type { CargoEleicao2026 } from './types/politico'
+import type { CargoEleicao2026, GeneroPolitico } from './types/politico'
 
 function AppShell({
   user,
@@ -49,14 +49,17 @@ function AppShell({
   const [cargo, setCargo] = useState<CargoEleicao2026 | ''>('')
   const [ufFilter, setUfFilter] = useState('')
   const [partido, setPartido] = useState('')
+  const [genero, setGenero] = useState<GeneroPolitico | ''>('')
   const [detailId, setDetailId] = useState<string | null>(null)
   const [colaPickCargo, setColaPickCargo] = useState<CargoEleicao2026 | null>(null)
 
   const politicos = data?.politicos ?? []
 
   useEffect(() => {
-    if (uf && !ufFilter) setUfFilter(uf)
-  }, [uf, ufFilter])
+    if (uf && !ufFilter && cargo !== 'presidente') {
+      setUfFilter(uf)
+    }
+  }, [uf, ufFilter, cargo])
 
   const filterOptions = useMemo(
     () => extractFilterOptions(politicos),
@@ -64,14 +67,14 @@ function AppShell({
   )
 
   const filtered = useMemo(
-    () => filterPoliticos(politicos, busca, cargo, ufFilter, partido),
-    [politicos, busca, cargo, ufFilter, partido],
+    () => filterPoliticos(politicos, busca, cargo, ufFilter, partido, genero),
+    [politicos, busca, cargo, ufFilter, partido, genero],
   )
 
   const colaFiltered = useMemo(() => {
     if (!colaPickCargo) return filtered
-    return filterPoliticos(politicos, busca, colaPickCargo, ufFilter, partido)
-  }, [politicos, busca, colaPickCargo, ufFilter, partido, filtered])
+    return filterPoliticos(politicos, busca, colaPickCargo, ufFilter, partido, genero)
+  }, [politicos, busca, colaPickCargo, ufFilter, partido, genero, filtered])
 
   const detailPolitico = detailId
     ? politicos.find((p) => p.id === detailId)
@@ -81,6 +84,16 @@ function AppShell({
     void setEscolha(politico)
     setColaPickCargo(null)
     setTab('cola')
+  }
+
+  function handleCargoChange(nextCargo: CargoEleicao2026 | '') {
+    setCargo(nextCargo)
+
+    if (nextCargo === 'presidente') {
+      setUfFilter('')
+      setPartido('')
+      setGenero('')
+    }
   }
 
   async function handleLogout() {
@@ -192,13 +205,16 @@ function AppShell({
               cargo={cargo}
               uf={ufFilter}
               partido={partido}
+              genero={genero}
               cargos={filterOptions.cargos}
               ufs={filterOptions.ufs}
               partidos={filterOptions.partidos}
+              generos={filterOptions.generos}
               onBuscaChange={setBusca}
-              onCargoChange={setCargo}
+              onCargoChange={handleCargoChange}
               onUfChange={setUfFilter}
               onPartidoChange={setPartido}
+              onGeneroChange={setGenero}
             />
 
             {detailPolitico && (
@@ -231,9 +247,9 @@ function AppShell({
                       colaPickCargo
                         ? () => handlePickForCola(politico)
                         : () => {
-                            void setEscolha(politico)
-                            setTab('cola')
-                          }
+                          void setEscolha(politico)
+                          setTab('cola')
+                        }
                     }
                     onViewDetail={() => setDetailId(politico.id)}
                   />

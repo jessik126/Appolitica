@@ -32,6 +32,7 @@ interface CamaraDeputado {
   siglaUf: string
   urlFoto: string
   email?: string
+  sexo?: string
   idLegislatura?: number
 }
 
@@ -44,8 +45,21 @@ interface CamaraDeputadoDetail extends CamaraDeputado {
     siglaUf: string
     urlFoto?: string
     email?: string
+    sexo?: string
     gabinete?: { email?: string }
   }
+}
+
+function normalizeGenero(value?: string): Mandatario['genero'] {
+  const normalized = value?.trim().toLowerCase()
+
+  if (!normalized) return undefined
+
+  if (['f', 'feminino', 'feminina'].includes(normalized)) return 'feminino'
+  if (['m', 'masculino', 'masculina'].includes(normalized)) return 'masculino'
+  if (['nb', 'nao binario', 'nao_binario', 'não binário', 'nao-binario'].includes(normalized)) return 'nao_binario'
+
+  return 'outro'
 }
 
 interface CamaraProposicao {
@@ -126,6 +140,7 @@ async function fetchAllDeputados(): Promise<CamaraDeputado[]> {
 function mapDeputado(d: CamaraDeputado): Mandatario {
   const externalId = String(d.id)
   const email = d.email?.trim() || undefined
+  const genero = normalizeGenero(d.sexo)
 
   return {
     id: buildPoliticoId('CD', externalId),
@@ -137,6 +152,7 @@ function mapDeputado(d: CamaraDeputado): Mandatario {
     partido: d.siglaPartido,
     uf: d.siglaUf,
     foto: d.urlFoto,
+    genero,
     contatos: {
       email: email && email.includes('@') ? email : undefined,
     },
@@ -188,6 +204,7 @@ export async function getCamaraDeputadoDetail(externalId: string): Promise<Manda
       status?.gabinete?.email?.trim() ||
       d.email?.trim() ||
       undefined
+    const genero = normalizeGenero(d.sexo ?? status?.sexo)
 
     return {
       id: buildPoliticoId('CD', externalId),
@@ -199,6 +216,7 @@ export async function getCamaraDeputadoDetail(externalId: string): Promise<Manda
       partido: status?.siglaPartido ?? d.siglaPartido,
       uf: status?.siglaUf ?? d.siglaUf,
       foto: status?.urlFoto ?? d.urlFoto,
+      genero,
       contatos: {
         email: email && email.includes('@') ? email : undefined,
         site: `https://www.camara.leg.br/deputados/${externalId}`,

@@ -46,9 +46,22 @@ interface SenadoDetalheResponse {
       IdentificacaoParlamentar: SenadoParlamentarLista['IdentificacaoParlamentar']
       DadosBasicosParlamentar?: {
         NomeCompletoParlamentar?: string
+        SexoParlamentar?: string
       }
     }
   }
+}
+
+function normalizeGenero(value?: string): Mandatario['genero'] {
+  const normalized = value?.trim().toLowerCase()
+
+  if (!normalized) return undefined
+
+  if (['f', 'feminino', 'feminina'].includes(normalized)) return 'feminino'
+  if (['m', 'masculino', 'masculina'].includes(normalized)) return 'masculino'
+  if (['nb', 'nao binario', 'nao_binario', 'não binário', 'nao-binario'].includes(normalized)) return 'nao_binario'
+
+  return 'outro'
 }
 
 interface SenadoVotacaoItem {
@@ -105,7 +118,17 @@ async function fetchSenadoJson<T>(path: string, params?: Record<string, string>)
   return res.json() as Promise<T>
 }
 
-function mapSenador(p: SenadoParlamentarLista): Mandatario {
+async function fetchSenadorGenero(externalId: string): Promise<Mandatario['genero']> {
+  try {
+    const json = await fetchSenadoJson<SenadoDetalheResponse>(`/senador/${externalId}`)
+    const p = json.DetalheParlamentar?.Parlamentar
+    return normalizeGenero(p?.DadosBasicosParlamentar?.SexoParlamentar)
+  } catch {
+    return undefined
+  }
+}
+
+function mapSenador(p: SenadoParlamentarLista, genero?: Mandatario['genero']): Mandatario {
   const id = p.IdentificacaoParlamentar
   const externalId = id.CodigoParlamentar
   const email = id.EmailParlamentar?.trim()
@@ -120,6 +143,7 @@ function mapSenador(p: SenadoParlamentarLista): Mandatario {
     partido: id.SiglaPartidoParlamentar,
     uf: id.UfParlamentar,
     foto: id.UrlFotoParlamentar,
+    genero,
     contatos: {
       email: email && email.includes('@') ? email : undefined,
       site: id.UrlPaginaParlamentar,
@@ -132,7 +156,13 @@ function mapSenador(p: SenadoParlamentarLista): Mandatario {
 export async function syncSenadoSenadores(): Promise<MandatariosCache> {
   const json = await fetchSenadoJson<SenadoListaResponse>('/senador/lista/atual')
   const lista = asArray(json.ListaParlamentarEmExercicio?.Parlamentares?.Parlamentar)
-  const mapped = lista.map(mapSenador)
+  const mapped = await Promise.all(
+    lista.map(async (p) => {
+      const externalId = p.IdentificacaoParlamentar.CodigoParlamentar
+      const genero = await fetchSenadorGenero(externalId)
+      return mapSenador(p, genero)
+    }),
+  )
   const mandatarios = Array.from(new Map(mapped.map((m) => [m.id, m])).values())
 
   await replaceMandatariosByFonte(mandatarios, 'senado')
@@ -171,6 +201,7 @@ export async function getSenadorDetail(externalId: string): Promise<Mandatario |
 
     const id = p.IdentificacaoParlamentar
     const email = id.EmailParlamentar?.trim()
+    const genero = normalizeGenero(p.DadosBasicosParlamentar?.SexoParlamentar)
 
     return {
       id: buildPoliticoId('SF', externalId),
@@ -182,6 +213,7 @@ export async function getSenadorDetail(externalId: string): Promise<Mandatario |
       partido: id.SiglaPartidoParlamentar,
       uf: id.UfParlamentar,
       foto: id.UrlFotoParlamentar,
+      genero,
       contatos: {
         email: email && email.includes('@') ? email : undefined,
         site: id.UrlPaginaParlamentar ?? `https://www25.senado.leg.br/web/senadores/senador/-/perfil/${externalId}`,
