@@ -11,6 +11,7 @@ async function main() {
   console.log(`Câmara: ${camara.metadata.total} deputados`)
   console.log(`Senado: ${senado.metadata.total} senadores`)
   await closeDb()
+  process.exit(0)
 }
 
 main().catch(async (err) => {

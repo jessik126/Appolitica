@@ -1,4 +1,4 @@
-import { eq, or } from 'drizzle-orm'
+import { eq, or, isNull } from 'drizzle-orm'
 import { getDb } from '../db/client.js'
 import { mandatarios } from '../db/schema.js'
 
@@ -100,7 +100,7 @@ async function backfillSenado() {
 async function main() {
   const db = getDb()
   const missingRows = await db.query.mandatarios.findMany({
-    where: or(eq(mandatarios.genero, null), eq(mandatarios.genero, '')),
+    where: or(isNull(mandatarios.genero), eq(mandatarios.genero, '')),
   })
 
   console.log(`Found ${missingRows.length} rows missing genero.`)

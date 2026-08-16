@@ -15,12 +15,15 @@
     "sync:camara": "tsx src/scripts/sync-camara.ts",
     "sync:senado": "tsx src/scripts/sync-senado.ts",
     "sync": "tsx src/scripts/sync-all.ts",
+    "tse:check": "tsx src/scripts/check-tse-updates.ts",
+    "tse:ingest": "tsx src/scripts/ingest-tse.ts",
     "test": "node --import tsx --test src/lib/plain-language.test.ts"
   },
   "dependencies": {
     "@appolitica/types": "workspace:*",
     "@hono/node-server": "^1.14.4",
     "bcryptjs": "^3.0.3",
+    "csv-parse": "^7.0.2",
     "dotenv": "^16.5.0",
     "drizzle-orm": "^0.45.2",
     "hono": "^4.7.10",

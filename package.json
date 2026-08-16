@@ -6,14 +6,14 @@
     "node": ">=20"
   },
   "scripts": {
-    "setup": "pnpm install && pnpm build && pnpm infra:up && pnpm --filter @appolitica/api db:migrate && pnpm --filter @appolitica/api seed:mock && pnpm --filter @appolitica/api sync",
+    "sync:db": "pnpm --filter @appolitica/api db:migrate && pnpm --filter @appolitica/api seed:mock && pnpm --filter @appolitica/api sync",
     "dev": "pnpm --filter @appolitica/types build && turbo run dev",
     "build": "turbo run build",
     "lint": "turbo run lint",
     "preview": "turbo run preview --filter=@appolitica/web",
     "deploy": "turbo run deploy",
     "deploy:web": "turbo run deploy --filter=@appolitica/web",
-    "infra:up": "bash scripts/infra-up.sh",
+    "infra:up": "pnpm install && pnpm build && bash scripts/infra-up.sh",
     "infra:down": "bash scripts/infra-down.sh"
   },
   "devDependencies": {
