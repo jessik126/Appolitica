@@ -1,55 +1,57 @@
 # Fontes de dados — Appolitica
 
-## Em uso no PoC
+## Visão geral
 
-### Câmara dos Deputados (primária)
+Appolitica agrega dados de políticos brasileiros de múltiplas fontes oficiais. Todos os dados são **sincronizados para Postgres** e servidos via API REST (nunca direto do browser).
 
-- Docs: https://dadosabertos.camara.leg.br/swagger/api.html
-- Base: `https://dadosabertos.camara.leg.br/api/v2/`
-- Auth: nenhuma
-- Uso: listagem de deputados, perfil, proposições autoria, votações recentes
-- Persistência: Postgres (`mandatarios`, `sync_metadata`) via `pnpm --filter @appolitica/api sync:camara`
+## Fontes ativas
 
-### Senado Federal (secundária)
+### 1. Câmara dos Deputados (primária)
 
-- Docs: https://legis.senado.leg.br/dadosabertos/api-docs/swagger-ui/index.html
-- Base: `https://legis.senado.leg.br/dadosabertos`
-- Auth: nenhuma
-- Uso: senadores em exercício, votações e processos via `/votacao` e `/processo`
-- Persistência: Postgres via `pnpm --filter @appolitica/api sync:senado`
+**Escopo:** deputados federais em exercício, perfil, proposições e votações
 
-### Mock curado (Postgres)
+| | |
+|---|---|
+| **Endpoint** | https://dadosabertos.camara.leg.br/api/v2/ |
+| **Autenticação** | Nenhuma |
+| **Sync** | `pnpm sync:db` → `apps/api/src/scripts/sync-all.ts` |
+| **Tabela** | `mandatarios` (casa='CD') |
+| **Frequência** | Manual (pode ser agendado) |
+| **Docs** | https://dadosabertos.camara.leg.br/swagger/api.html |
 
-- Seed: `apps/api/src/data/mock-politicos.seed.json` → `pnpm --filter @appolitica/api seed:mock`
-- Cargos: presidente, governador, deputado estadual (até integração TSE)
-- Ações mock ficam em `acoes`; federal continua live via Câmara/Senado
+**Dados capturados:** nome civil, nome parlamentar, gênero, UF, partido, foto, email, gabinete.
 
-### Despesas CEAP (deputados)
+### 2. Senado Federal (secundária)
 
-- Endpoint BFF: `GET /politicos/by-id/CD:{id}/despesas?ano=2025`
-- Fonte: Câmara `/deputados/{id}/despesas`
-- UI: seção "Gastos com cota parlamentar" no detalhe do deputado
+**Escopo:** senadores em exercício, composição por UF
 
-### Portal da Transparência
+| | |
+|---|---|
+| **Endpoint** | https://legis.senado.leg.br/dadosabertos |
+| **Autenticação** | Nenhuma |
+| **Sync** | `pnpm sync:db` → `apps/api/src/scripts/sync-all.ts` |
+| **Tabela** | `mandatarios` (casa='SF') |
+| **Frequência** | Manual (pode ser agendado) |
+| **Docs** | https://legis.senado.leg.br/dadosabertos/api-docs/ |
 
-- Docs: https://api.portaldatransparencia.gov.br/swagger-ui/index.html
-- Cadastro: https://portaldatransparencia.gov.br/api-de-dados/cadastrar-email (conta Gov.br)
-- Header: `chave-api-dados: SEU_TOKEN`
-- Config: `PORTAL_TRANSPARENCIA_TOKEN` em `apps/api/.env` (ver `.env.example`)
-- Limites: ~400 req/min (700 entre 00h–06h); endpoints restritos ~180 req/min
-- Endpoints BFF:
-  - `GET /portal/status` — valida token
-  - `GET /portal/despesas/orgao?codigoOrgao=20000&ano=2025&mes=1` — gasto executivo por órgão
+**Dados capturados:** idem Câmara; validação de mandatos 2023–2027.
 
-**Uso no produto:** despesas de deputado vêm da **Câmara (CEAP)**. O Portal serve para gasto do Poder Executivo e consultas por órgão/favorecido.
+### 3. Dados mock curado
 
-### Pós-PoC — Portal por favorecido
+**Escopo:** presidente, governadores, deputados estaduais (fora do fluxo live)
 
-Para lookup por CPF/CNPJ: `/despesas/documentos-por-favorecido` (restrito, 180 req/min). Requer mapear identidade do político → CPF.
+| | |
+|---|---|
+| **Fonte** | `apps/api/src/data/mock-politicos.seed.json` |
+| **Seed** | `pnpm sync:db` (incluso) |
+| **Tabela** | `mandatarios` (casa=null) |
+| **Uso** | Testes, protótipos, fases sem TSE |
 
-## Regras de arquitetura
+**Razão:** TSE não oferece API aberta em tempo real para estaduais e municipais ainda.
 
-- Nunca chamar Câmara, Senado ou Portal da Transparência direto do browser (CORS + rate limits)
-- IDs federais normalizados: `CD:{id}` (deputado), `SF:{codigo}` (senador)
-- IDs não são compartilhados entre casas
-- Catálogo unificado via `GET /politicos` (Postgres); web não carrega JSON estático
+## Restrições de segurança
+
+- ❌ Nunca chamar APIs de Câmara, Senado direto do browser (CORS bloqueado, rate limits)
+- ✅ Sempre via backend (`apps/api/src/routes/*`)
+- ✅ Cache em Postgres para reduzir requisições
+- ✅ Sync manual ou agendado
